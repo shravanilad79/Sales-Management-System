@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Management System</title>
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #263238;
+        }
+        a { text-decoration: none; color: inherit; }
+        header {
+            background: #17324d;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 8px #0002;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: auto;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .logo span { color: #55c2ff; }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+        nav a {
+            padding: 9px 11px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        nav a:hover { background: #294967; }
+
+        main {
+            max-width: 1400px;
+            margin: auto;
+            padding: 28px 24px 50px;
+        }
+        .hero {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border-left: 5px solid #2196f3;
+            box-shadow: 0 2px 10px #0000000d;
+        }
+        .hero h1 { margin: 0 0 8px; color: #17324d; }
+        .hero p { margin: 0; color: #64748b; }
+
+        section {
+            scroll-margin-top: 90px;
+            margin-bottom: 28px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        h2 {
+            margin: 0;
+            color: #17324d;
+            font-size: 22px;
+        }
+        h3 {
+            color: #17324d;
+            margin-top: 0;
+        }
+        .muted { color: #718096; font-size: 13px; }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 19px;
+            box-shadow: 0 2px 10px #0000000d;
+            border: 1px solid #e6edf4;
+        }
+        .stat-label { color: #718096; font-size: 13px; margin-bottom: 8px; }
+        .stat-value { font-size: 26px; font-weight: bold; color: #17324d; }
+        .stat-note { font-size: 12px; margin-top: 7px; color: #2e7d32; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px #0000000d;
+            border: 1px solid #e6edf4;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+        th, td {
+            padding: 11px 10px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background: #eef5fb;
+            color: #294967;
+            font-weight: bold;
+        }
+        tr:hover td { background: #fafcff; }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            background: #e8f1f8;
+            color: #28506f;
+        }
+        .green { background: #e7f6ea; color: #23753a; }
+        .red { background: #fdeaea; color: #a83232; }
+        .orange { background: #fff2df; color: #9a5b08; }
+        .blue { background: #e6f2ff; color: #1769aa; }
+        .purple { background: #f0eafd; color: #6240a0; }
+
+        /* Sales pipeline */
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .stage {
+            min-width: 185px;
+            background: #eef3f7;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .stage h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            padding-bottom: 9px;
+            border-bottom: 2px solid #d7e1ea;
+        }
+        .deal {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 5px #0001;
+        }
+        .deal strong { display: block; margin-bottom: 5px; font-size: 13px; }
+        .deal small { display: block; color: #718096; line-height: 1.5; }
+
+        /* Forms */
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+        label { font-size: 13px; font-weight: bold; color: #394b59; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid #ccd7e0;
+            border-radius: 6px;
+            background: white;
+            font: inherit;
+        }
+        textarea { min-height: 85px; resize: vertical; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+        }
+        button {
+            padding: 11px 18px;
+            border: 0;
+            border-radius: 6px;
+            background: #2196f3;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #1976d2; }
+        .form-actions { grid-column: 1 / -1; }
+
+        .progress {
+            width: 100%;
+            height: 9px;
+            background: #e4ebf1;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress span {
+            display: block;
+            height: 100%;
+            background: #2196f3;
+        }
+        .activity-list { list-style: none; padding: 0; margin: 0; }
+        .activity-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf1f4;
+        }
+        .activity-list li:last-child { border-bottom: 0; }
+
+        .profile {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e7f0f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            margin: auto;
+        }
+        footer {
+            background: #17324d;
+            color: #dce8f2;
+            text-align: center;
+            padding: 22px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1000px) {
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            .pipeline { grid-template-columns: repeat(3, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            .header-inner { flex-direction: column; align-items: flex-start; }
+            nav { justify-content: flex-start; }
+            main { padding: 20px 14px 40px; }
+            .cards { grid-template-columns: 1fr; }
+            .pipeline { grid-template-columns: 1fr; }
+            .stage { min-width: 100%; }
+            form { grid-template-columns: 1fr; }
+            .form-group.full, .form-actions { grid-column: auto; }
+            .profile { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+    <div class="header-inner">
+        <div class="logo">📊 Sales<span>Manager</span></div>
+        <nav>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#pipeline">Sales Pipeline</a>
+            <a href="#deals">Deals</a>
+            <a href="#customers">Customers</a>
+            <a href="#forecast">Forecast</a>
+            <a href="#performance">Performance</a>
+            <a href="#reports">Reports</a>
+            <a href="#profile">Profile</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- ==================== INTRO ==================== -->
+    <div class="hero">
+        <h1>Sales Management System</h1>
+        <p>Manage sales opportunities, track deals, monitor customers and understand sales performance from one simple dashboard.</p>
+    </div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <section id="dashboard">
+        <div class="section-title">
+            <h2>📊 Dashboard</h2>
+            <span class="muted">Sales overview - September 2026</span>
+        </div>
+
+        <div class="cards">
+            <article class="card">
+                <div class="stat-label">Total Sales</div>
+                <div class="stat-value">₹18.45 L</div>
+                <div class="stat-note">↑ 12.5% this month</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Total Deals</div>
+                <div class="stat-value">86</div>
+                <div class="stat-note">14 new this week</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Active Deals</div>
+                <div class="stat-value">42</div>
+                <div class="stat-note">Across 4 pipeline stages</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Won Deals</div>
+                <div class="stat-value">28</div>
+                <div class="stat-note">↑ 8.2% from last month</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Lost Deals</div>
+                <div class="stat-value">16</div>
+                <div class="stat-note">18.6% of total deals</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">₹24.80 L</div>
+                <div class="stat-note">YTD revenue</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Monthly Target</div>
+                <div class="stat-value">₹20 L</div>
+                <div class="stat-note">92.25% achieved</div>
+            </article>
+            <article class="card">
+                <div class="stat-label">Conversion Rate</div>
+                <div class="stat-value">32.6%</div>
+                <div class="stat-note">↑ 4.1% improvement</div>
+            </article>
+        </div>
+
+        <div class="grid-2">
+            <div class="panel">
+                <h3>Recent Deals</h3>
+                <table>
+                    <tr><th>Deal</th><th>Customer</th><th>Value</th><th>Status</th></tr>
+                    <tr><td>Enterprise CRM</td><td>TechNova Ltd.</td><td>₹4,50,000</td><td><span class="badge green">Won</span></td></tr>
+                    <tr><td>Cloud Service</td><td>Bright Solutions</td><td>₹2,80,000</td><td><span class="badge orange">Negotiation</span></td></tr>
+                    <tr><td>Security Package</td><td>Metro Systems</td><td>₹1,75,000</td><td><span class="badge blue">Proposal</span></td></tr>
+                    <tr><td>Analytics Tool</td><td>GreenLeaf Corp.</td><td>₹3,20,000</td><td><span class="badge purple">Qualified</span></td></tr>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h3>Upcoming Follow-ups</h3>
+                <ul class="activity-list">
+                    <li><strong>TechNova Ltd.</strong><br><span class="muted">Meeting with Rahul Sharma - 30 Sep, 10:30 AM</span></li>
+                    <li><strong>Bright Solutions</strong><br><span class="muted">Proposal follow-up - 30 Sep, 2:00 PM</span></li>
+                    <li><strong>Metro Systems</strong><br><span class="muted">Product demonstration - 01 Oct, 11:00 AM</span></li>
+                    <li><strong>GreenLeaf Corp.</strong><br><span class="muted">Email follow-up - 02 Oct, 3:30 PM</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="panel">
+                <h3>Top Sales Representatives</h3>
+                <table>
+                    <tr><th>Representative</th><th>Deals</th><th>Revenue</th></tr>
+                    <tr><td>Rahul Sharma</td><td>14</td><td>₹5.20 L</td></tr>
+                    <tr><td>Priya Patil</td><td>12</td><td>₹4.65 L</td></tr>
+                    <tr><td>Amit Joshi</td><td>10</td><td>₹3.80 L</td></tr>
+                    <tr><td>Neha Kulkarni</td><td>9</td><td>₹3.10 L</td></tr>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h3>Recent Sales Activities</h3>
+                <ul class="activity-list">
+                    <li>📞 Call completed with TechNova Ltd.</li>
+                    <li>🤝 Meeting completed with Bright Solutions.</li>
+                    <li>📧 Proposal email sent to Metro Systems.</li>
+                    <li>🎯 Product demonstration scheduled for GreenLeaf Corp.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SALES PIPELINE ==================== -->
+    <section id="pipeline">
+        <div class="section-title">
+            <h2>🔄 Sales Pipeline</h2>
+            <span class="muted">Current opportunities by stage</span>
+        </div>
+
+        <div class="pipeline">
+            <article class="stage">
+                <h3>Lead</h3>
+                <div class="deal"><strong>Retail POS</strong><small>Nova Retail</small><small>₹1,20,000</small><small>Raj Mehta</small><small>15 Oct 2026</small></div>
+                <div class="deal"><strong>HR Software</strong><small>PeopleFirst</small><small>₹2,10,000</small><small>Neha Kulkarni</small><small>20 Oct 2026</small></div>
+            </article>
+
+            <article class="stage">
+                <h3>Qualified</h3>
+                <div class="deal"><strong>Analytics Tool</strong><small>GreenLeaf Corp.</small><small>₹3,20,000</small><small>Rahul Sharma</small><small>08 Oct 2026</small></div>
+                <div class="deal"><strong>Cloud Package</strong><small>Alpha Works</small><small>₹2,50,000</small><small>Priya Patil</small><small>12 Oct 2026</small></div>
+            </article>
+
+            <article class="stage">
+                <h3>Proposal</h3>
+                <div class="deal"><strong>Security Package</strong><small>Metro Systems</small><small>₹1,75,000</small><small>Amit Joshi</small><small>05 Oct 2026</small></div>
+                <div class="deal"><strong>ERP Solution</strong><small>Star Industries</small><small>₹4,10,000</small><small>Rahul Sharma</small><small>18 Oct 2026</small></div>
+            </article>
+
+            <article class="stage">
+                <h3>Negotiation</h3>
+                <div class="deal"><strong>Cloud Service</strong><small>Bright Solutions</small><small>₹2,80,000</small><small>Priya Patil</small><small>02 Oct 2026</small></div>
+                <div class="deal"><strong>CRM Platform</strong><small>FutureTech</small><small>₹3,60,000</small><small>Raj Mehta</small><small>06 Oct 2026</small></div>
+            </article>
+
+            <article class="stage">
+                <h3>Won</h3>
+                <div class="deal"><strong>Enterprise CRM</strong><small>TechNova Ltd.</small><small>₹4,50,000</small><small>Rahul Sharma</small><small>28 Sep 2026</small><span class="badge green">Won</span></div>
+                <div class="deal"><strong>Data Backup</strong><small>ABC Finance</small><small>₹1,40,000</small><small>Neha Kulkarni</small><small>25 Sep 2026</small><span class="badge green">Won</span></div>
+            </article>
+
+            <article class="stage">
+                <h3>Lost</h3>
+                <div class="deal"><strong>Mobile CRM</strong><small>QuickTrade</small><small>₹1,90,000</small><small>Amit Joshi</small><small>22 Sep 2026</small><span class="badge red">Lost</span></div>
+                <div class="deal"><strong>Web Portal</strong><small>Urban Mart</small><small>₹1,10,000</small><small>Raj Mehta</small><small>19 Sep 2026</small><span class="badge red">Lost</span></div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ==================== DEAL TRACKING ==================== -->
+    <section id="deals">
+        <div class="section-title">
+            <h2>💼 Deal Tracking</h2>
+            <span class="muted">Track every sales opportunity</span>
+        </div>
+
+        <div class="panel">
+            <table>
+                <tr>
+                    <th>Deal ID</th><th>Customer</th><th>Deal Name</th><th>Sales Representative</th>
+                    <th>Amount</th><th>Stage</th><th>Probability</th><th>Expected Close</th><th>Status</th>
+                </tr>
+                <tr><td>D001</td><td>TechNova Ltd.</td><td>Enterprise CRM</td><td>Rahul Sharma</td><td>₹4,50,000</td><td>Won</td><td>100%</td><td>28 Sep 2026</td><td><span class="badge green">Won</span></td></tr>
+                <tr><td>D002</td><td>Bright Solutions</td><td>Cloud Service</td><td>Priya Patil</td><td>₹2,80,000</td><td>Negotiation</td><td>75%</td><td>02 Oct 2026</td><td><span class="badge orange">Active</span></td></tr>
+                <tr><td>D003</td><td>Metro Systems</td><td>Security Package</td><td>Amit Joshi</td><td>₹1,75,000</td><td>Proposal</td><td>60%</td><td>05 Oct 2026</td><td><span class="badge blue">Active</span></td></tr>
+                <tr><td>D004</td><td>GreenLeaf Corp.</td><td>Analytics Tool</td><td>Rahul Sharma</td><td>₹3,20,000</td><td>Qualified</td><td>45%</td><td>08 Oct 2026</td><td><span class="badge purple">Active</span></td></tr>
+                <tr><td>D005</td><td>QuickTrade</td><td>Mobile CRM</td><td>Amit Joshi</td><td>₹1,90,000</td><td>Lost</td><td>0%</td><td>22 Sep 2026</td><td><span class="badge red">Lost</span></td></tr>
+            </table>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>Add New Deal</h3>
+            <form>
+                <div class="form-group"><label for="customer">Customer Name</label><input id="customer" type="text" placeholder="Enter customer name"></div>
+                <div class="form-group"><label for="dealname">Deal Name</label><input id="dealname" type="text" placeholder="Enter deal name"></div>
+                <div class="form-group"><label for="amount">Amount</label><input id="amount" type="number" placeholder="Enter amount"></div>
+                <div class="form-group"><label for="salesrep">Sales Representative</label><select id="salesrep"><option>Rahul Sharma</option><option>Priya Patil</option><option>Amit Joshi</option><option>Neha Kulkarni</option><option>Raj Mehta</option></select></div>
+                <div class="form-group"><label for="stage">Stage</label><select id="stage"><option>Lead</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Lost</option></select></div>
+                <div class="form-group"><label for="date">Expected Close Date</label><input id="date" type="date"></div>
+                <div class="form-group"><label for="probability">Probability</label><select id="probability"><option>10%</option><option>25%</option><option>50%</option><option>75%</option><option>100%</option></select></div>
+                <div class="form-group full"><label for="notes">Notes</label><textarea id="notes" placeholder="Enter deal notes"></textarea></div>
+                <div class="form-actions"><button type="submit">＋ Add Deal</button></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ==================== CUSTOMERS ==================== -->
+    <section id="customers">
+        <div class="section-title">
+            <h2>👥 Customer Management</h2>
+            <span class="muted">Manage customer information</span>
+        </div>
+
+        <div class="panel">
+            <table>
+                <tr><th>Customer ID</th><th>Customer Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Industry</th><th>Deal Value</th><th>Status</th></tr>
+                <tr><td>C001</td><td>Rohan Verma</td><td>TechNova Ltd.</td><td>rohan@technova.example</td><td>98765 12345</td><td>Technology</td><td>₹4,50,000</td><td><span class="badge green">Active</span></td></tr>
+                <tr><td>C002</td><td>Meera Shah</td><td>Bright Solutions</td><td>meera@bright.example</td><td>98765 23456</td><td>IT Services</td><td>₹2,80,000</td><td><span class="badge green">Active</span></td></tr>
+                <tr><td>C003</td><td>Vikram Desai</td><td>Metro Systems</td><td>vikram@metro.example</td><td>98765 34567</td><td>Security</td><td>₹1,75,000</td><td><span class="badge blue">Prospect</span></td></tr>
+                <tr><td>C004</td><td>Anjali Rao</td><td>GreenLeaf Corp.</td><td>anjali@greenleaf.example</td><td>98765 45678</td><td>Analytics</td><td>₹3,20,000</td><td><span class="badge purple">Qualified</span></td></tr>
+            </table>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>Add Customer</h3>
+            <form>
+                <div class="form-group"><label for="cname">Customer Name</label><input id="cname" type="text" placeholder="Enter customer name"></div>
+                <div class="form-group"><label for="company">Company</label><input id="company" type="text" placeholder="Enter company"></div>
+                <div class="form-group"><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
+                <div class="form-group"><label for="phone">Phone</label><input id="phone" type="tel" placeholder="Enter phone number"></div>
+                <div class="form-group"><label for="industry">Industry</label><select id="industry"><option>Technology</option><option>IT Services</option><option>Finance</option><option>Manufacturing</option><option>Healthcare</option><option>Retail</option></select></div>
+                <div class="form-group"><label for="customerstatus">Status</label><select id="customerstatus"><option>Active</option><option>Prospect</option><option>Qualified</option><option>Inactive</option></select></div>
+                <div class="form-actions"><button type="submit">＋ Add Customer</button></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ==================== FORECAST ==================== -->
+    <section id="forecast">
+        <div class="section-title">
+            <h2>📈 Sales Forecast</h2>
+            <span class="muted">Monthly sales planning and forecast</span>
+        </div>
+
+        <div class="cards">
+            <article class="card"><div class="stat-label">Expected Revenue</div><div class="stat-value">₹22.40 L</div><div class="stat-note">From active pipeline</div></article>
+            <article class="card"><div class="stat-label">Forecast Revenue</div><div class="stat-value">₹20.75 L</div><div class="stat-note">Weighted forecast</div></article>
+            <article class="card"><div class="stat-label">Closed Revenue</div><div class="stat-value">₹18.45 L</div><div class="stat-note">Current month</div></article>
+            <article class="card"><div class="stat-label">Target Achievement</div><div class="stat-value">92.25%</div><div class="progress"><span style="width:92.25%;"></span></div></article>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>January - December Forecast</h3>
+            <table>
+                <tr><th>Month</th><th>Target</th><th>Expected Sales</th><th>Actual Sales</th><th>Achievement %</th></tr>
+                <tr><td>January</td><td>₹15 L</td><td>₹16.2 L</td><td>₹15.8 L</td><td>105.3%</td></tr>
+                <tr><td>February</td><td>₹15 L</td><td>₹15.6 L</td><td>₹14.9 L</td><td>99.3%</td></tr>
+                <tr><td>March</td><td>₹16 L</td><td>₹17.4 L</td><td>₹16.8 L</td><td>105.0%</td></tr>
+                <tr><td>April</td><td>₹16 L</td><td>₹16.5 L</td><td>₹15.4 L</td><td>96.3%</td></tr>
+                <tr><td>May</td><td>₹17 L</td><td>₹18.2 L</td><td>₹17.6 L</td><td>103.5%</td></tr>
+                <tr><td>June</td><td>₹17 L</td><td>₹17.9 L</td><td>₹16.9 L</td><td>99.4%</td></tr>
+                <tr><td>July</td><td>₹18 L</td><td>₹19.1 L</td><td>₹18.3 L</td><td>101.7%</td></tr>
+                <tr><td>August</td><td>₹19 L</td><td>₹20.0 L</td><td>₹18.8 L</td><td>98.9%</td></tr>
+                <tr><td>September</td><td>₹20 L</td><td>₹22.4 L</td><td>₹18.45 L</td><td>92.25%</td></tr>
+                <tr><td>October</td><td>₹20 L</td><td>₹21.5 L</td><td>—</td><td>Forecast</td></tr>
+                <tr><td>November</td><td>₹21 L</td><td>₹22.8 L</td><td>—</td><td>Forecast</td></tr>
+                <tr><td>December</td><td>₹22 L</td><td>₹24.0 L</td><td>—</td><td>Forecast</td></tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- ==================== PERFORMANCE ==================== -->
+    <section id="performance">
+        <div class="section-title">
+            <h2>🏆 Performance Analytics</h2>
+            <span class="muted">Sales team performance overview</span>
+        </div>
+
+        <div class="cards">
+            <article class="card"><div class="stat-label">Total Sales</div><div class="stat-value">₹18.45 L</div></article>
+            <article class="card"><div class="stat-label">Number of Deals</div><div class="stat-value">86</div></article>
+            <article class="card"><div class="stat-label">Won Deals</div><div class="stat-value">28</div></article>
+            <article class="card"><div class="stat-label">Lost Deals</div><div class="stat-value">16</div></article>
+            <article class="card"><div class="stat-label">Conversion Rate</div><div class="stat-value">32.6%</div></article>
+            <article class="card"><div class="stat-label">Average Deal Size</div><div class="stat-value">₹65,900</div></article>
+            <article class="card"><div class="stat-label">Target Achievement</div><div class="stat-value">92.25%</div></article>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>Sales Representative Performance</h3>
+            <table>
+                <tr><th>Representative Name</th><th>Deals Closed</th><th>Revenue Generated</th><th>Target</th><th>Achievement</th><th>Performance Status</th></tr>
+                <tr><td>Rahul Sharma</td><td>14</td><td>₹5.20 L</td><td>₹5.00 L</td><td>104%</td><td><span class="badge green">Excellent</span></td></tr>
+                <tr><td>Priya Patil</td><td>12</td><td>₹4.65 L</td><td>₹5.00 L</td><td>93%</td><td><span class="badge blue">Good</span></td></tr>
+                <tr><td>Amit Joshi</td><td>10</td><td>₹3.80 L</td><td>₹4.50 L</td><td>84%</td><td><span class="badge orange">On Track</span></td></tr>
+                <tr><td>Neha Kulkarni</td><td>9</td><td>₹3.10 L</td><td>₹4.00 L</td><td>77.5%</td><td><span class="badge orange">On Track</span></td></tr>
+                <tr><td>Raj Mehta</td><td>8</td><td>₹2.90 L</td><td>₹4.00 L</td><td>72.5%</td><td><span class="badge red">Needs Focus</span></td></tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- ==================== REPORTS ==================== -->
+    <section id="reports">
+        <div class="section-title">
+            <h2>📋 Reports</h2>
+            <span class="muted">Sales information and business reports</span>
+        </div>
+
+        <div class="grid-2">
+            <div class="panel">
+                <h3>Monthly Sales Report</h3>
+                <table>
+                    <tr><th>Month</th><th>Sales</th><th>Target</th><th>Status</th></tr>
+                    <tr><td>July</td><td>₹18.3 L</td><td>₹18 L</td><td><span class="badge green">Achieved</span></td></tr>
+                    <tr><td>August</td><td>₹18.8 L</td><td>₹19 L</td><td><span class="badge orange">Near Target</span></td></tr>
+                    <tr><td>September</td><td>₹18.45 L</td><td>₹20 L</td><td><span class="badge blue">In Progress</span></td></tr>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h3>Deal Status Report</h3>
+                <table>
+                    <tr><th>Status</th><th>Deals</th><th>Value</th></tr>
+                    <tr><td>Won</td><td>28</td><td>₹18.45 L</td></tr>
+                    <tr><td>Active</td><td>42</td><td>₹22.40 L</td></tr>
+                    <tr><td>Lost</td><td>16</td><td>₹6.20 L</td></tr>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h3>Customer Report</h3>
+                <table>
+                    <tr><th>Customer Type</th><th>Count</th><th>Deal Value</th></tr>
+                    <tr><td>Active Customers</td><td>48</td><td>₹19.20 L</td></tr>
+                    <tr><td>Prospects</td><td>26</td><td>₹12.80 L</td></tr>
+                    <tr><td>New Customers</td><td>12</td><td>₹5.40 L</td></tr>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h3>Revenue Report</h3>
+                <table>
+                    <tr><th>Revenue Type</th><th>Amount</th><th>Share</th></tr>
+                    <tr><td>Product Sales</td><td>₹11.20 L</td><td>60.7%</td></tr>
+                    <tr><td>Service Sales</td><td>₹5.75 L</td><td>31.2%</td></tr>
+                    <tr><td>Other Revenue</td><td>₹1.50 L</td><td>8.1%</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>Sales Representative Report</h3>
+            <table>
+                <tr><th>Representative</th><th>Leads</th><th>Qualified</th><th>Proposals</th><th>Won</th><th>Lost</th><th>Revenue</th></tr>
+                <tr><td>Rahul Sharma</td><td>25</td><td>18</td><td>12</td><td>14</td><td>4</td><td>₹5.20 L</td></tr>
+                <tr><td>Priya Patil</td><td>23</td><td>16</td><td>11</td><td>12</td><td>5</td><td>₹4.65 L</td></tr>
+                <tr><td>Amit Joshi</td><td>21</td><td>15</td><td>10</td><td>10</td><td>4</td><td>₹3.80 L</td></tr>
+                <tr><td>Neha Kulkarni</td><td>19</td><td>13</td><td>9</td><td>9</td><td>3</td><td>₹3.10 L</td></tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- ==================== SALES ACTIVITIES ==================== -->
+    <section id="activities">
+        <div class="section-title">
+            <h2>📅 Sales Activities</h2>
+            <span class="muted">Calls, meetings, emails and follow-ups</span>
+        </div>
+
+        <div class="panel">
+            <table>
+                <tr><th>Activity</th><th>Customer</th><th>Sales Representative</th><th>Date</th><th>Time</th><th>Status</th></tr>
+                <tr><td>📞 Call</td><td>TechNova Ltd.</td><td>Rahul Sharma</td><td>30 Sep 2026</td><td>10:30 AM</td><td><span class="badge green">Completed</span></td></tr>
+                <tr><td>🤝 Meeting</td><td>Bright Solutions</td><td>Priya Patil</td><td>30 Sep 2026</td><td>02:00 PM</td><td><span class="badge blue">Scheduled</span></td></tr>
+                <tr><td>📧 Email</td><td>Metro Systems</td><td>Amit Joshi</td><td>01 Oct 2026</td><td>09:30 AM</td><td><span class="badge orange">Pending</span></td></tr>
+                <tr><td>🔄 Follow-up</td><td>GreenLeaf Corp.</td><td>Rahul Sharma</td><td>02 Oct 2026</td><td>03:30 PM</td><td><span class="badge blue">Scheduled</span></td></tr>
+                <tr><td>🎯 Product Demonstration</td><td>Star Industries</td><td>Neha Kulkarni</td><td>03 Oct 2026</td><td>11:00 AM</td><td><span class="badge purple">Scheduled</span></td></tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- ==================== PROFILE ==================== -->
+    <section id="profile">
+        <div class="section-title">
+            <h2>👤 Profile</h2>
+            <span class="muted">User account information</span>
+        </div>
+
+        <div class="panel profile">
+            <div>
+                <div class="avatar">👤</div>
+                <p style="text-align:center;font-weight:bold;">Profile Photo</p>
+            </div>
+
+            <div>
+                <h3>Sales Manager Profile</h3>
+                <table>
+                    <tr><th>Name</th><td>Rahul Sharma</td></tr>
+                    <tr><th>Role</th><td>Sales Manager</td></tr>
+                    <tr><th>Email</th><td>rahul.sharma@example.com</td></tr>
+                    <tr><th>Phone</th><td>98765 12345</td></tr>
+                    <tr><th>Department</th><td>Sales & Business Development</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+            <h3>Edit Profile</h3>
+            <form>
+                <div class="form-group"><label for="pname">Name</label><input id="pname" type="text" value="Rahul Sharma"></div>
+                <div class="form-group"><label for="prole">Role</label><input id="prole" type="text" value="Sales Manager"></div>
+                <div class="form-group"><label for="pemail">Email</label><input id="pemail" type="email" value="rahul.sharma@example.com"></div>
+                <div class="form-group"><label for="pphone">Phone</label><input id="pphone" type="tel" value="98765 12345"></div>
+                <div class="form-group"><label for="pdepartment">Department</label><input id="pdepartment" type="text" value="Sales & Business Development"></div>
+                <div class="form-actions"><button type="submit">Save Profile</button></div>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    © 2026 Sales Management System | HTML Academic Project
+</footer>
+
+</body>
+</html>
